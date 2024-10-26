@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editable Table with HTML+React</title>
+    <!-- React and ReactDOM via CDN -->
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+      const { useState } = React;
+
+      function EditableTable() {
+        // Adding 3 columns data
+        const initialData = [
+          ["Onboarding Call", "", ""],
+          ["Google Search Console Access", "", ""],
+          ["Google Analytics Access", "", ""],
+          ["Website Access", "", ""],
+          ["Technical Audit", "", ""],
+          ["Anchor Text and Semantic Analysis", "", ""],
+          ["Competitor Analysis", "", ""],
+          ["Anchor Text / URL Mapping", "", ""],
+          ["Google Data Studio Report + Local Reporting Suite", "", ""],
+          ["Site Level Optimization", "", ""],
+          ["On Page Optimization", "", ""],
+          ["Content Creation", "", ""],
+          ["Content Publishing", "", ""],
+          ["Premium Press Release", "", ""],
+          ["Authority Niche Placements", "", ""],
+          ["Review Management", "", ""],
+          ["Index Links", "", ""],
+          ["Video Recap", "", ""],
+        ];
+
+        const [tableData, setTableData] = useState(initialData);
+
+        const handleEdit = (rowIndex, colIndex, event) => {
+          console.log("rowIndex, colIndex, event", rowIndex, colIndex, event);
+          const newData = [...tableData];
+          newData[rowIndex][colIndex] = event.target.innerText;
+          setTableData(newData);
+        };
+
+        const postData = () => {
+          //   console.log("table data", tableData);
+          fetch("https://target-api-to-post-data.com/post", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tableData }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        };
+
+        return (
+          <div>
+            <h2>Edit Table Data and Click on save Data button to save data</h2>
+            <table border="1" style={{ borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th>Month 1</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {row.map((cell, colIndex) => (
+                      <td
+                        key={colIndex}
+                        contentEditable="true"
+                        onBlur={(event) =>
+                          handleEdit(rowIndex, colIndex, event)
+                        }
+                        style={{ padding: "8px", minWidth: "300px" }}
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <br />
+            <button onClick={postData}>Save Data</button>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<EditableTable />, document.getElementById("app"));
+    </script>
+  </body>
+</html>
